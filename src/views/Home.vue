@@ -22,10 +22,12 @@
     <dialog id="product-details">
       <form method="dialog">
         <h1>Product Info</h1>
-        <p>Name: {{ currentProduct.name }}</p>
-        <p>Description: {{ currentProduct.description }}</p>
-        <p>Price: {{ currentProduct.price }}</p>
-        <button>Close</button>
+        <p>Name: <input v-model="currentProduct.name"></p>
+        <p>Description: <input v-model="currentProduct.description"></p>
+        <p>Price: <input v-model="currentProduct.price"></p>
+        <p><button>Close</button></p>
+        <p><button v-on:click="updateProduct(currentProduct)">Update</button></p>
+        <p><button v-on:click="destroyProduct(currentProduct)">Delete</button></p>
       </form>
     </dialog>
     <!-- <h1>{{ products }}</h1> -->
@@ -73,6 +75,32 @@ export default {
       console.log("Show Action");
       this.currentProduct = product;
       document.querySelector("#product-details").showModal();
+    },
+    updateProduct: function (product) {
+      console.log("updating");
+
+      var params = {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+      };
+
+      axios.patch("/api/products/" + this.currentProduct.id, params).then((response) => {
+        console.log(response.data);
+        this.currentProduct(response.data);
+      });
+    },
+
+    destroyProduct: function (product) {
+      console.log("product deleted...");
+
+      axios.delete("/api/products/" + this.currentProduct.id).then((response) => {
+        console.log(response.data);
+        this.currentProduct(response.data);
+
+        var index = this.products.indexOf(product);
+        this.products;
+      });
     },
   },
 };
